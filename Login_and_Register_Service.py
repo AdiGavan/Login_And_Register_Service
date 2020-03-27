@@ -66,6 +66,7 @@ def is_user_correct(username, password):
     else:
         return True
 
+"""
 @app.route('/', methods=['GET'])
 def check_login():
     
@@ -77,32 +78,48 @@ def check_login():
         return jsonify({'Result' : "OK", "Username" : username, "Password" : password})
     else:
         return jsonify({'Result' : "NOT OK", "Username" : username, "Password" : password})
-    
-
+"""    
 
 @app.route('/', methods=['POST'])
 def take_data():
     
+    status = ""
+    error = ""
+
     jsonData = request.get_json()
-    firstName = jsonData['FirstName']
-    lastName = jsonData['LastName']
-    username = jsonData['Username']
-    password = jsonData['Password']
-    registrationDate = jsonData['RegistrationDate']
-    registrationTime = jsonData['RegistrationTime']
-    lineID = addDataToDatabase(firstName, lastName, username, password, registrationDate, registrationTime)
+    command = jsonData['Command']
+    if command == "CheckLogin":
+        username = jsonData['Username']
+        password = jsonData['Password']
+        allow = is_user_correct(username, password)
+        if allow:
+            status = "Success"
+            error = "Nothing"
+        else:
+            status = "Failed"
+            error = "Username or Password is incorrect."
+    
+    elif command == "Register":
+        firstName = jsonData['FirstName']
+        lastName = jsonData['LastName']
+        username = jsonData['Username']
+        password = jsonData['Password']
+        registrationDate = jsonData['RegistrationDate']
+        registrationTime = jsonData['RegistrationTime']
+        lineID = addDataToDatabase(firstName, lastName, username, password, registrationDate, registrationTime)
 
-    # Test (returneaza datele introduse + id-ul)
-    # TODO ghilimele sau apostrof
-
-    aux = ""
-    if lineID == -1:
-        aux = "Error"
-    elif lineID == -2:
-        aux = "User already exists"
-    else:
-        aux = "Success"
-    return jsonify({'Result' : aux, 'FirstName' : firstName, 'LastName' : lastName, "Username" : username, "Password" : password, "RegistrationDate" : registrationDate, "RegistrationTime" : registrationTime, "LineID" : lineID})
+        if lineID == -1:
+            status = "Failed"
+            error = "Error at adding the new account."
+        elif lineID == -2:
+            status = "Failed"
+            error = "User already exists"
+        else:
+            status = "Success"
+            error = "Nothing"
+    
+    return jsonify({"Status" : status, "Error" : error})
+    #return jsonify({'Result' : aux, 'FirstName' : firstName, 'LastName' : lastName, 'Username' : username, 'Password' : password, 'RegistrationDate' : registrationDate, 'RegistrationTime' : registrationTime, 'LineID' : lineID})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
