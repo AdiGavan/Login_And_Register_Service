@@ -73,10 +73,10 @@ def take_data():
     error = ""
 
     jsonData = request.get_json()
-    command = jsonData['Command']
+    command = jsonData['command']
     if command == "CheckLogin":
-        username = jsonData['Username']
-        password = jsonData['Password']
+        username = jsonData['username']
+        password = jsonData['password']
         allow = is_user_correct(username, password)
         if allow:
             status = "Success"
@@ -104,7 +104,7 @@ def take_data():
             status = "Success"
             error = "Nothing"
     
-    return jsonify({"Status" : status, "Error" : error})
+    return jsonify({"status" : status, "error" : error})
     #return jsonify({'Result' : aux, 'FirstName' : firstName, 'LastName' : lastName, 'Username' : username, 'Password' : password, 'RegistrationDate' : registrationDate, 'RegistrationTime' : registrationTime, 'LineID' : lineID})
 
 if __name__ == "__main__":
