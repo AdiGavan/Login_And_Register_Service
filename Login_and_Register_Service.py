@@ -10,7 +10,6 @@ def before_first_request_func():
 
     global db
     db = psycopg2.connect(host='db_login', port=5432, user='postgres', password='postgres', dbname='login_info_db')
-    #db = psycopg2.connect(host='127.0.0.1', port=5432, user='postgres', password='postgres', dbname='login_info_db')
 
     cursor = db.cursor()
     cursor.execute(
@@ -35,7 +34,7 @@ def before_first_request_func():
 def addDataToDatabase(firstName, lastName, username, password, registrationDate, registrationTime):
     global db
     db = psycopg2.connect(host='db_login', port=5432, user='postgres', password='postgres', dbname='login_info_db')
-    #db = psycopg2.connect(host='127.0.0.1', port=5432, user='postgres', password='postgres', dbname='login_info_db')
+
     cursor = db.cursor()
     cursor.execute("select * from users_login_info where username = %s", (username,))
     record = cursor.fetchall()
@@ -65,20 +64,7 @@ def is_user_correct(username, password):
         return False
     else:
         return True
-
-"""
-@app.route('/', methods=['GET'])
-def check_login():
-    
-    jsonData = request.get_json()
-    username = jsonData['Username']
-    password = jsonData['Password']
-    allow = is_user_correct(username, password)
-    if allow:
-        return jsonify({'Result' : "OK", "Username" : username, "Password" : password})
-    else:
-        return jsonify({'Result' : "NOT OK", "Username" : username, "Password" : password})
-"""    
+  
 
 @app.route('/', methods=['POST'])
 def take_data():
