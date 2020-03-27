@@ -86,12 +86,12 @@ def take_data():
             error = "Username or Password is incorrect."
     
     elif command == "Register":
-        firstName = jsonData['FirstName']
-        lastName = jsonData['LastName']
-        username = jsonData['Username']
-        password = jsonData['Password']
-        registrationDate = jsonData['RegistrationDate']
-        registrationTime = jsonData['RegistrationTime']
+        firstName = jsonData['firstname']
+        lastName = jsonData['lastname']
+        username = jsonData['username']
+        password = jsonData['password']
+        registrationDate = jsonData['registrationdate']
+        registrationTime = jsonData['registrationtime']
         lineID = addDataToDatabase(firstName, lastName, username, password, registrationDate, registrationTime)
 
         if lineID == -1:
