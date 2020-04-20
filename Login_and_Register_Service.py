@@ -1,7 +1,12 @@
 from flask import Flask, request, jsonify
 import psycopg2
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+
+metrics = PrometheusMetrics(app)
+
+metrics.info('app_info_login_and_register', 'Application info', version='1.0.1')
 
 db = None
 
