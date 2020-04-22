@@ -25,8 +25,7 @@ def before_first_request_func():
                 last_name VARCHAR(30) NOT NULL,
                 username VARCHAR(30) NOT NULL UNIQUE,
                 password VARCHAR(30) NOT NULL,
-                registration_date DATE NOT NULL,
-                registration_time TIME NOT NULL
+                registration_timestamp TIMESTAMP NOT NULL
 
         )
         """)
@@ -36,7 +35,7 @@ def before_first_request_func():
         db.close()
 
 # Function for adding new line into the database
-def addDataToDatabase(firstName, lastName, username, password, registrationDate, registrationTime):
+def addDataToDatabase(firstName, lastName, username, password, registrationTimestamp):
     global db
     db = psycopg2.connect(host='db_login', port=5432, user='postgres', password='postgres', dbname='login_info_db')
 
@@ -45,7 +44,7 @@ def addDataToDatabase(firstName, lastName, username, password, registrationDate,
     record = cursor.fetchall()
     if not record:
         try:
-            cursor.execute("INSERT INTO users_login_info(first_name, last_name, username, password, registration_date, registration_time) VALUES(%s, %s, %s, %s, %s, %s) RETURNING id", (firstName, lastName, username, password, registrationDate, registrationTime))
+            cursor.execute("INSERT INTO users_login_info(first_name, last_name, username, password, registration_timestamp) VALUES(%s, %s, %s, %s, %s) RETURNING id", (firstName, lastName, username, password, registrationTimestamp))
             lineID = cursor.fetchone()[0]
             db.commit()
         except:
@@ -97,7 +96,9 @@ def take_data():
         password = jsonData['password']
         registrationDate = jsonData['registrationdate']
         registrationTime = jsonData['registrationtime']
-        lineID = addDataToDatabase(firstName, lastName, username, password, registrationDate, registrationTime)
+
+        registrationTimestamp = registrationDate + " " + registrationTime
+        lineID = addDataToDatabase(firstName, lastName, username, password, registrationTimestamp)
 
         if lineID == -1:
             status = "Failed"
