@@ -5,15 +5,11 @@ from prometheus_flask_exporter import PrometheusMetrics
 app = Flask(__name__)
 
 metrics = PrometheusMetrics(app)
-
-metrics.info('app_info_login_and_register', 'Application info', version='1.0.1')
-
-db = None
+metrics.info('app_info_login_and_register', 'Application info', version='1.0.0')
 
 @app.before_first_request
 def before_first_request_func():
 
-    global db
     db = psycopg2.connect(host='db_login', port=5432, user='postgres', password='postgres', dbname='login_info_db')
 
     cursor = db.cursor()
@@ -29,14 +25,16 @@ def before_first_request_func():
 
         )
         """)
-    cursor.close()
+    if cursor is not None:
+        cursor.close()
+
     db.commit()
     if db is not None:
         db.close()
 
 # Function for adding new line into the database
 def addDataToDatabase(firstName, lastName, username, password, registrationTimestamp):
-    global db
+
     db = psycopg2.connect(host='db_login', port=5432, user='postgres', password='postgres', dbname='login_info_db')
 
     cursor = db.cursor()
@@ -59,7 +57,7 @@ def addDataToDatabase(firstName, lastName, username, password, registrationTimes
     return lineID
 
 def is_user_correct(username, password):
-    global db
+
     db = psycopg2.connect(host='db_login', port=5432, user='postgres', password='postgres', dbname='login_info_db')
     cursor = db.cursor()
     cursor.execute("select * from users_login_info where username = %s and password = %s", (username, password))
@@ -111,7 +109,6 @@ def take_data():
             error = "Nothing"
     
     return jsonify({"status" : status, "error" : error})
-    #return jsonify({'Result' : aux, 'FirstName' : firstName, 'LastName' : lastName, 'Username' : username, 'Password' : password, 'RegistrationDate' : registrationDate, 'RegistrationTime' : registrationTime, 'LineID' : lineID})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
